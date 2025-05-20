@@ -19,7 +19,7 @@ public class News {
     private String body;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "writer_id")
     private User writer;
 }
 
