@@ -18,6 +18,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+
+    public User(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     @GeneratedValue
     @Id
     UUID id;
