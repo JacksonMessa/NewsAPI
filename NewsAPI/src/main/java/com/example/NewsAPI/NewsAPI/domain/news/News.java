@@ -1,0 +1,25 @@
+package com.example.NewsAPI.NewsAPI.domain.news;
+import com.example.NewsAPI.NewsAPI.domain.user.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.UUID;
+
+@Table(name = "news")
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class News {
+    @GeneratedValue
+    @Id
+    private UUID id;
+    private String title;
+    private String body;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User writer;
+}
+
