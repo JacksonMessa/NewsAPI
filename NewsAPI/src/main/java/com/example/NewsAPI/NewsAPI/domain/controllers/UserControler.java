@@ -6,6 +6,7 @@ import com.example.NewsAPI.NewsAPI.domain.user.User;
 import com.example.NewsAPI.NewsAPI.domain.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +26,9 @@ public class UserControler {
             return ResponseEntity.badRequest().body("This username is already registered");
         }
 
+        String encrypetPassword = new BCryptPasswordEncoder().encode(data.password());
 
-        User newUser = new User(data.username(), data.password(), data.role());
+        User newUser = new User(data.username(), encrypetPassword, data.role());
         repository.save(newUser);
         return ResponseEntity.ok().body("User created successfully");
     }
