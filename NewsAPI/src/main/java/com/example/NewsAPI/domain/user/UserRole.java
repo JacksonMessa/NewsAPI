@@ -1,4 +1,4 @@
-package com.example.NewsAPI.NewsAPI.domain.user;
+package com.example.NewsAPI.domain.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

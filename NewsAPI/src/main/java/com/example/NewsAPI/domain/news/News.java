@@ -1,5 +1,5 @@
-package com.example.NewsAPI.NewsAPI.domain.news;
-import com.example.NewsAPI.NewsAPI.domain.user.User;
+package com.example.NewsAPI.domain.news;
+import com.example.NewsAPI.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
