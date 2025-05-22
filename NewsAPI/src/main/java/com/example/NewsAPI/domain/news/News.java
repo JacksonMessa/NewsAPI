@@ -3,6 +3,7 @@ import com.example.NewsAPI.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Table(name = "news")
@@ -17,6 +18,7 @@ public class News {
     private UUID id;
     private String title;
     private String body;
+    private Date published_at;
 
     @ManyToOne
     @JoinColumn(name = "writer_id")
