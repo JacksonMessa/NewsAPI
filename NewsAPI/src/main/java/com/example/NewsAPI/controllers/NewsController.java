@@ -25,12 +25,16 @@ public class NewsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NewsGetResponseDTO>> get(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "-1") int pageSize){
+    public ResponseEntity<List<NewsGetResponseDTO>> get(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "-1") int pageSize,
+                                                        @RequestParam(required = false) String title,
+                                                        @RequestParam(required = false) String writer
+    ){
         List<NewsGetResponseDTO> newsList;
         if (pageSize <= 0){
-            newsList = newsService.get();
+            newsList = newsService.get(title,writer);
         }else {
-            newsList = newsService.getNewsPaged(page,pageSize);
+            newsList = newsService.getNewsPaged(title,writer,page,pageSize);
         }
 
         return ResponseEntity.ok().body(newsList);

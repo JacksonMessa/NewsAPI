@@ -45,8 +45,8 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    public List<NewsGetResponseDTO> get(){
-        List<News> newsList = newsRepository.findAll();
+    public List<NewsGetResponseDTO> get(String title,String writer){
+        List<News> newsList = newsRepository.findNews(title,writer);
         return newsList.stream().map(news -> new NewsGetResponseDTO(
                 news.getId(),
                 news.getTitle(),
@@ -56,9 +56,9 @@ public class NewsService {
                 .toList();
     }
 
-    public List<NewsGetResponseDTO> getNewsPaged(int page, int pageSize){
+    public List<NewsGetResponseDTO> getNewsPaged(String title,String writer,int page, int pageSize){
         Pageable pageable = PageRequest.of(page,pageSize);
-        Page<News> newsPage = newsRepository.findAll(pageable);
+        Page<News> newsPage = newsRepository.findNews(title,writer,pageable);
         return newsPage.map(news -> new NewsGetResponseDTO(
                         news.getId(),
                         news.getTitle(),
