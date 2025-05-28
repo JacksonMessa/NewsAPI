@@ -18,7 +18,7 @@ public class News {
     private UUID id;
     private String title;
     private String body;
-    private Date published_at;
+    private Date publishedAt;
 
     @ManyToOne
     @JoinColumn(name = "writer_id")
