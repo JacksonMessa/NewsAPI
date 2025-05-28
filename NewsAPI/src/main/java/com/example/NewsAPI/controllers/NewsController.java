@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("news-api/news")
@@ -42,5 +43,12 @@ public class NewsController {
         }
 
         return ResponseEntity.ok().body(newsList);
+    }
+
+    @GetMapping("/{newsId}")
+    public ResponseEntity<NewsResponseDTO> getOne(@PathVariable UUID newsId){
+        News news = newsService.getOne(newsId);
+        return ResponseEntity.ok().body(new NewsResponseDTO("News found successfully",news.getId(),news.getTitle(), news.getBody(),news.getPublishedAt(),news.getWriter().getUsername()));
+
     }
 }

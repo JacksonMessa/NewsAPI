@@ -21,6 +21,7 @@ import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class NewsService {
@@ -120,6 +121,11 @@ public class NewsService {
         calendar.add(Calendar.DATE,1);
 
         return calendar.getTime();
+    }
+
+    public News getOne(UUID newsID){
+        return newsRepository.findById(newsID)
+                .orElseThrow(() -> new IllegalArgumentException("News Not Found"));
     }
 
 }
