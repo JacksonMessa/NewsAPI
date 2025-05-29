@@ -49,6 +49,11 @@ public class NewsController {
     public ResponseEntity<NewsResponseDTO> getOne(@PathVariable UUID newsId){
         News news = newsService.getOne(newsId);
         return ResponseEntity.ok().body(new NewsResponseDTO("News found successfully",news.getId(),news.getTitle(), news.getBody(),news.getPublishedAt(),news.getWriter().getUsername()));
-
     }
+
+    @PutMapping("/{newsId}")
+    public ResponseEntity<NewsResponseDTO> update(@PathVariable UUID newsId, @RequestBody NewsRequestDTO data){
+        return newsService.update(newsId,data);
+    }
+
 }

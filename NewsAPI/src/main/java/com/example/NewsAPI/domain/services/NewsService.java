@@ -4,6 +4,7 @@ import com.example.NewsAPI.domain.infra.security.TokenService;
 import com.example.NewsAPI.domain.news.News;
 import com.example.NewsAPI.domain.news.NewsGetResponseDTO;
 import com.example.NewsAPI.domain.news.NewsRequestDTO;
+import com.example.NewsAPI.domain.news.NewsResponseDTO;
 import com.example.NewsAPI.domain.repositories.NewsRepository;
 import com.example.NewsAPI.domain.repositories.UserRepository;
 import com.example.NewsAPI.domain.user.User;
@@ -11,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -126,6 +129,33 @@ public class NewsService {
     public News getOne(UUID newsID){
         return newsRepository.findById(newsID)
                 .orElseThrow(() -> new IllegalArgumentException("News Not Found"));
+    }
+
+    public ResponseEntity<NewsResponseDTO> update(UUID newsID, NewsRequestDTO data){
+
+        if (!userRepository.existsById(newsID)){
+            return ResponseEntity.status(404).body(new NewsResponseDTO("News not found.",null,null,null,null,null));
+        }
+
+        News oldNews = getOne(newsID);
+
+        String loggedUsername = tokenService.recoverTokenAndGetUsername();
+
+        if (!loggedUsername.equals(oldNews.getWriter().getUsername())){
+            return ResponseEntity.status(401).body(new NewsResponseDTO("You are not authorized to update this news because it belongs to another user.",null,null,null,null,null));
+        }
+
+        News updatedNews = new News(
+            oldNews.getId(),
+            data.title() != null ? data.title() : oldNews.getTitle(),
+            data.body() != null ? data.body() : oldNews.getBody(),
+            oldNews.getPublishedAt(),
+            oldNews.getWriter()
+        );
+
+        newsRepository.save(updatedNews);
+
+        return ResponseEntity.ok().body(new NewsResponseDTO("News updated successfully",updatedNews.getId(),updatedNews.getTitle(), updatedNews.getBody(),updatedNews.getPublishedAt(),updatedNews.getWriter().getUsername()));
     }
 
 }
