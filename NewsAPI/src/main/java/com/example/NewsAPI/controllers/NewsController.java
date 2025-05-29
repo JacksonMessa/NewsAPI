@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +51,11 @@ public class NewsController {
     @PutMapping("/{newsId}")
     public ResponseEntity<NewsResponseDTO> update(@PathVariable UUID newsId, @RequestBody NewsRequestDTO data){
         return newsService.update(newsId,data);
+    }
+
+    @DeleteMapping("/{newsId}")
+    public ResponseEntity<NewsResponseDTO> delete(@PathVariable UUID newsId){
+        return newsService.delete(newsId);
     }
 
 }

@@ -32,6 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST,"/news-api/news").hasRole("WRITER")
                         .requestMatchers(HttpMethod.GET,"/news-api/news").authenticated()
                         .requestMatchers(HttpMethod.GET,"/news-api/news/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/news-api/news/**").hasRole("WRITER")
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

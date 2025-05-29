@@ -158,4 +158,23 @@ public class NewsService {
         return ResponseEntity.ok().body(new NewsResponseDTO("News updated successfully",updatedNews.getId(),updatedNews.getTitle(), updatedNews.getBody(),updatedNews.getPublishedAt(),updatedNews.getWriter().getUsername()));
     }
 
+    public ResponseEntity<NewsResponseDTO> delete(UUID newsID){
+
+        if (!newsRepository.existsById(newsID)){
+            return ResponseEntity.status(404).body(new NewsResponseDTO("News not found.",null,null,null,null,null));
+        }
+
+        News news = getOne(newsID);
+
+        String loggedUsername = tokenService.recoverTokenAndGetUsername();
+
+        if (!loggedUsername.equals(news.getWriter().getUsername())){
+            return ResponseEntity.status(401).body(new NewsResponseDTO("You are not authorized to update this news because it belongs to another user.",null,null,null,null,null));
+        }
+
+        newsRepository.delete(news);
+
+        return ResponseEntity.ok().body(new NewsResponseDTO("News deleted successfully",news.getId(),news.getTitle(), news.getBody(),news.getPublishedAt(),news.getWriter().getUsername()));
+    }
+
 }
