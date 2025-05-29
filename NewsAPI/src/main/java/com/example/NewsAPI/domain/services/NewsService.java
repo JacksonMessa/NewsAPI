@@ -133,7 +133,7 @@ public class NewsService {
 
     public ResponseEntity<NewsResponseDTO> update(UUID newsID, NewsRequestDTO data){
 
-        if (!userRepository.existsById(newsID)){
+        if (!newsRepository.existsById(newsID)){
             return ResponseEntity.status(404).body(new NewsResponseDTO("News not found.",null,null,null,null,null));
         }
 
