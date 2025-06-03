@@ -1,6 +1,5 @@
 package com.example.NewsAPI.domain.services;
 
-import com.example.NewsAPI.domain.infra.security.TokenService;
 import com.example.NewsAPI.domain.news.News;
 import com.example.NewsAPI.domain.news.NewsGetResponseDTO;
 import com.example.NewsAPI.domain.news.NewsRequestDTO;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

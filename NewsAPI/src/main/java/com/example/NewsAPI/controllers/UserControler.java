@@ -1,7 +1,7 @@
 package com.example.NewsAPI.controllers;
 
 import com.example.NewsAPI.domain.repositories.UserRepository;
-import com.example.NewsAPI.domain.infra.security.TokenService;
+import com.example.NewsAPI.domain.services.TokenService;
 import com.example.NewsAPI.domain.user.LoginRequestDTO;
 import com.example.NewsAPI.domain.user.LoginResponseDTO;
 import com.example.NewsAPI.domain.user.RegisterDTO;

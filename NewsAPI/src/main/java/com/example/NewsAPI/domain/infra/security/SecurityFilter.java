@@ -1,6 +1,7 @@
 package com.example.NewsAPI.domain.infra.security;
 
 import com.example.NewsAPI.domain.repositories.UserRepository;
+import com.example.NewsAPI.domain.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
