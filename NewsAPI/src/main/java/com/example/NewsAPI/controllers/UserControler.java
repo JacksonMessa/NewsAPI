@@ -2,15 +2,13 @@ package com.example.NewsAPI.controllers;
 
 import com.example.NewsAPI.domain.repositories.UserRepository;
 import com.example.NewsAPI.domain.services.TokenService;
-import com.example.NewsAPI.domain.user.LoginRequestDTO;
-import com.example.NewsAPI.domain.user.LoginResponseDTO;
-import com.example.NewsAPI.domain.user.RegisterDTO;
-import com.example.NewsAPI.domain.user.User;
+import com.example.NewsAPI.domain.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +27,7 @@ public class UserControler {
 
     @Autowired
     TokenService tokenService;
+
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDTO data){
@@ -50,7 +49,9 @@ public class UserControler {
 
         String token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok().body(new LoginResponseDTO("Login successfully",token));
+        User user = repository.findUserByUsername(data.username());
+
+        return ResponseEntity.ok().body(new LoginResponseDTO("Login successfully",token, new UserResponseDTO(user.getUsername(),user.getRole())));
     }
 
 }
