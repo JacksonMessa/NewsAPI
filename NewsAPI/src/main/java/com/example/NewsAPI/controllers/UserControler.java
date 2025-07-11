@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,16 +29,16 @@ public class UserControler {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDTO data){
+    public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO data){
         if(repository.findByUsername(data.username())!=null){
-            return ResponseEntity.badRequest().body("This username is already registered");
+            return ResponseEntity.badRequest().body(new RegisterResponseDTO("This username is already registered"));
         }
 
         String encrypetPassword = new BCryptPasswordEncoder().encode(data.password());
 
         User newUser = new User(data.username(), encrypetPassword, data.role());
         repository.save(newUser);
-        return ResponseEntity.ok().body("User created successfully");
+        return ResponseEntity.ok().body(new RegisterResponseDTO("User created successfully"));
     }
 
     @PostMapping("/login")
