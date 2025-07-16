@@ -1,4 +1,4 @@
-NewsAPI é uma API feita em Java, uitlizando Spring, Spring Boot, Spring Security, PostgreSQL e alguns outros Frameworks.
+NewsAPI é uma API feita em Java, uitilzando Spring, Spring Boot, Spring Security, PostgreSQL e alguns outros Frameworks.
 Nela é possível se cadastrar como leitor ou escritor, além de publicar, ler, atualizar e excluir e notícias. Também, está implementado nesta API um sistema de token, que é necessário para acessar alguns endpoints, para a criação e verificação desses tokens foram utilizados JWT e Spring Security.
 Para mais detalhes acesse sua documentação em: https://documenter.getpostman.com/view/35019224/2sB2qi8cwc.
 
