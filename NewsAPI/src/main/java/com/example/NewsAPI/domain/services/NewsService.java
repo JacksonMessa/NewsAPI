@@ -1,9 +1,6 @@
 package com.example.NewsAPI.domain.services;
 
-import com.example.NewsAPI.domain.news.News;
-import com.example.NewsAPI.domain.news.NewsGetResponseDTO;
-import com.example.NewsAPI.domain.news.NewsRequestDTO;
-import com.example.NewsAPI.domain.news.NewsResponseDTO;
+import com.example.NewsAPI.domain.news.*;
 import com.example.NewsAPI.domain.repositories.NewsRepository;
 import com.example.NewsAPI.domain.repositories.UserRepository;
 import com.example.NewsAPI.domain.user.User;
@@ -50,7 +47,7 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    public List<NewsGetResponseDTO> get(String title,String writer,String publicationDate){
+    public ResponseEntity<NewsGetResponseListDTO> get(String title,String writer,String publicationDate){
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -73,16 +70,19 @@ public class NewsService {
         }
 
         List<News> newsList = newsRepository.findNews(title,writer,startDate,endDate);
-        return newsList.stream().map(news -> new NewsGetResponseDTO(
-                news.getId(),
-                news.getTitle(),
-                news.getBody(),
-                news.getPublishedAt(),
-                news.getWriter().getUsername()))
-                .toList();
+
+        List<NewsGetResponseDTO> newsListResponse = newsList.stream().map(news -> new NewsGetResponseDTO(
+                                                        news.getId(),
+                                                        news.getTitle(),
+                                                        news.getBody(),
+                                                        news.getPublishedAt(),
+                                                        news.getWriter().getUsername())
+                                                    ).toList();
+
+        return ResponseEntity.ok().body(new NewsGetResponseListDTO("News returned successfully",newsList.size(),1,newsListResponse));
     }
 
-    public List<NewsGetResponseDTO> getNewsPaged(String title,String writer,String publicationDate,int page, int pageSize){
+    public ResponseEntity<NewsGetResponseListDTO> getNewsPaged(String title, String writer, String publicationDate, int page, int pageSize){
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -106,13 +106,15 @@ public class NewsService {
 
         Pageable pageable = PageRequest.of(page,pageSize);
         Page<News> newsPage = newsRepository.findNews(title,writer,startDate,endDate,pageable);
-        return newsPage.map(news -> new NewsGetResponseDTO(
-                        news.getId(),
-                        news.getTitle(),
-                        news.getBody(),
-                        news.getPublishedAt(),
-                        news.getWriter().getUsername()))
-                .stream().toList();
+        List<NewsGetResponseDTO> newsListResponse = newsPage.map(news -> new NewsGetResponseDTO(
+                                                        news.getId(),
+                                                        news.getTitle(),
+                                                        news.getBody(),
+                                                        news.getPublishedAt(),
+                                                        news.getWriter().getUsername())
+                                                    ).stream().toList();
+
+        return ResponseEntity.ok().body(new NewsGetResponseListDTO("News returned successfully",newsPage.getTotalElements(),newsPage.getTotalPages(),newsListResponse));
     }
 
     private Date addOneDayToDate(Date date){

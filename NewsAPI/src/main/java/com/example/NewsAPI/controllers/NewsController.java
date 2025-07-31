@@ -1,9 +1,6 @@
 package com.example.NewsAPI.controllers;
 
-import com.example.NewsAPI.domain.news.News;
-import com.example.NewsAPI.domain.news.NewsGetResponseDTO;
-import com.example.NewsAPI.domain.news.NewsRequestDTO;
-import com.example.NewsAPI.domain.news.NewsResponseDTO;
+import com.example.NewsAPI.domain.news.*;
 import com.example.NewsAPI.domain.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,20 +23,20 @@ public class NewsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NewsGetResponseDTO>> get(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<NewsGetResponseListDTO> get(@RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "-1") int pageSize,
                                                         @RequestParam(required = false) String title,
                                                         @RequestParam(required = false) String writer,
                                                         @RequestParam(required = false) String publicationDate
     ){
-        List<NewsGetResponseDTO> newsList;
+        ResponseEntity<NewsGetResponseListDTO> newsList;
         if (pageSize <= 0){
             newsList = newsService.get(title,writer,publicationDate);
         }else {
             newsList = newsService.getNewsPaged(title,writer,publicationDate,page,pageSize);
         }
 
-        return ResponseEntity.ok().body(newsList);
+        return newsList;
     }
 
     @GetMapping("/{newsId}")
