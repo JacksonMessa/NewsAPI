@@ -15,13 +15,16 @@ public interface NewsRepository extends JpaRepository<News, UUID> {
             "JOIN n.writer w " +
             "WHERE (:title IS NULL OR n.title LIKE %:title%) AND " +
             "(:writer IS NULL OR w.username = :writer) AND " +
-            "(n.publishedAt > :startDate AND n.publishedAt < :endDate)")
+            "(n.publishedAt > :startDate AND n.publishedAt < :endDate)" +
+            "ORDER BY n.publishedAt DESC"
+    )
     public List<News> findNews(String title, String writer, Date startDate, Date endDate);
 
     @Query("SELECT n FROM News n " +
             "JOIN n.writer w " +
             "WHERE (:title IS NULL OR n.title LIKE %:title%) AND " +
             "(:writer IS NULL OR w.username = :writer) AND " +
-            "(n.publishedAt > :startDate AND n.publishedAt < :endDate)")
+            "(n.publishedAt > :startDate AND n.publishedAt < :endDate)" +
+            "ORDER BY n.publishedAt DESC")
     public Page<News> findNews(String title, String writer,Date startDate, Date endDate,Pageable pageable);
 }
