@@ -38,6 +38,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             }catch (RuntimeException e){
                 response.setStatus(401);
                 response.getWriter().write("Failed to authenticate: " + e);
+                return;
             }
 
         }
