@@ -9,12 +9,17 @@ Para mais detalhes acesse sua documentação em: https://documenter.getpostman.c
   <li>PostgreSQL 17.4</li>
 </ul>
 
+<h2>Testando</h2>
+
+Para testar a NewsAPI é possível importar a documentação para o seu postman clicando em run in postman no link no topo deste README ou utilizar o passo a passo a seguir para testar localmente.
+
 <h2>Como utilizar</h2>
 <ul>
   <li>Tenha o Java e o PostgreSQL instalado em sua máquina;</li>
   <li>Clone o projeto na sua máquina: <strong>git clone https://github.com/JacksonMessa/NewsAPI.git</strong>;</li>
   <li>Configure o <a href="https://github.com/JacksonMessa/NewsAPI/blob/master/NewsAPI/src/main/resources/application.properties">application.properties</a> conforme a seu usuário e senha do PostgreSQL;</li>
   <li>Crie o banco de dados <i>news</i> no postgreSQL: <strong>CREATE DATABASE news</strong>;</li>
+  <li>Crie e configure as variáveis de ambiente: DATABASE_URL(url do seu banco de dados postgreSQL), DATABASE_USERNAME(usuário do seu postgreSQL), DATABASE_PASSWORD(senha do seu postgreSQL);</li>
   <li>Garanta que sua porta 8080 esteja livre ou altere a porta em inserindo <strong>server.port=número_da_porta</strong> no <a href="https://github.com/JacksonMessa/NewsAPI/blob/master/NewsAPI/src/main/resources/application.properties">application.properties</a>;</li>
   <li>Execute o projeto.</li>
 </ul>
