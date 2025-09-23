@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/news-api/news/**").authenticated()
                         .requestMatchers(HttpMethod.PUT,"/news-api/news/**").hasRole("WRITER")
                         .requestMatchers(HttpMethod.DELETE,"/news-api/news/**").hasRole("WRITER")
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
