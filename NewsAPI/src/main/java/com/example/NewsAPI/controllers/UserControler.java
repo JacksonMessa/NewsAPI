@@ -5,7 +5,9 @@ import com.example.NewsAPI.domain.services.TokenService;
 import com.example.NewsAPI.domain.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,14 +45,25 @@ public class UserControler {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO data){
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.username(),data.password());
-        Authentication auth = authenticationManager.authenticate(usernamePassword);
+        if(repository.findByUsername(data.username())==null){
+            return ResponseEntity.status(401).body(new LoginResponseDTO("Incorrect username or password",null,null));
+        }else {
 
-        String token = tokenService.generateToken((User) auth.getPrincipal());
+            ResponseEntity<LoginResponseDTO> loginResponse;
+            try{
+                UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.username(),data.password());
+                Authentication auth = authenticationManager.authenticate(usernamePassword);
+                String token = tokenService.generateToken((User) auth.getPrincipal());
+                User user = repository.findUserByUsername(data.username());
+                loginResponse = ResponseEntity.ok().body(new LoginResponseDTO("Login successfully",token, new UserResponseDTO(user.getUsername(),user.getRole())));
+            }catch (BadCredentialsException e){
+                loginResponse = ResponseEntity.status(401).body(new LoginResponseDTO("Incorrect username or password",null,null));
+            }
 
-        User user = repository.findUserByUsername(data.username());
+            return loginResponse;
+        }
 
-        return ResponseEntity.ok().body(new LoginResponseDTO("Login successfully",token, new UserResponseDTO(user.getUsername(),user.getRole())));
+
     }
 
 }
