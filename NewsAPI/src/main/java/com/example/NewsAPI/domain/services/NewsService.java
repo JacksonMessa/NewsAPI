@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,12 +35,16 @@ public class NewsService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    Clock clock;
+
     public News create(NewsRequestDTO data){
         News news = new News();
 
         news.setTitle(data.title());
         news.setBody(data.body());
-        news.setPublishedAt(Date.from(LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))));
+
+        news.setPublishedAt(Date.from(clock.instant()));
 
         String writerUsername = tokenService.recoverTokenAndGetUsername();
         UserDetails writer = userRepository.findByUsername(writerUsername);
