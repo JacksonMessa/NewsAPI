@@ -29,14 +29,13 @@ public class NewsController {
                                                         @RequestParam(required = false) String writer,
                                                         @RequestParam(required = false) String publicationDate
     ){
-        ResponseEntity<NewsGetResponseListDTO> newsList;
         if (pageSize <= 0){
-            newsList = newsService.get(title,writer,publicationDate);
+            List<NewsGetResponseDTO> newsList = newsService.get(title,writer,publicationDate);
+            return ResponseEntity.ok().body(new NewsGetResponseListDTO("News returned successfully",newsList.size(),1,newsList));
         }else {
-            newsList = newsService.getNewsPaged(title,writer,publicationDate,page,pageSize);
+            NewsGetResponseListDTO response = newsService.getNewsPaged(title,writer,publicationDate,page,pageSize);
+            return ResponseEntity.ok().body(response);
         }
-
-        return newsList;
     }
 
     @GetMapping("/{newsId}")
@@ -47,12 +46,14 @@ public class NewsController {
 
     @PutMapping("/{newsId}")
     public ResponseEntity<NewsResponseDTO> update(@PathVariable UUID newsId, @RequestBody NewsRequestDTO data){
-        return newsService.update(newsId,data);
+        News updatedNews = newsService.update(newsId,data);
+        return ResponseEntity.ok().body(new NewsResponseDTO("News updated successfully",updatedNews.getId(),updatedNews.getTitle(), updatedNews.getBody(),updatedNews.getPublishedAt(),updatedNews.getWriter().getUsername()));
     }
 
     @DeleteMapping("/{newsId}")
     public ResponseEntity<NewsResponseDTO> delete(@PathVariable UUID newsId){
-        return newsService.delete(newsId);
+        News newsDeleted = newsService.delete(newsId);
+        return ResponseEntity.ok().body(new NewsResponseDTO("News deleted successfully",newsDeleted.getId(),newsDeleted.getTitle(), newsDeleted.getBody(),newsDeleted.getPublishedAt(),newsDeleted.getWriter().getUsername()));
     }
 
 }

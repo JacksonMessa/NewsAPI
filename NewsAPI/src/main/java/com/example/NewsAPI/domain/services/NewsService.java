@@ -4,6 +4,9 @@ import com.example.NewsAPI.domain.news.*;
 import com.example.NewsAPI.domain.repositories.NewsRepository;
 import com.example.NewsAPI.domain.repositories.UserRepository;
 import com.example.NewsAPI.domain.user.User;
+import com.example.NewsAPI.exception.BelongsToAnotherWriterException;
+import com.example.NewsAPI.exception.DateConvertException;
+import com.example.NewsAPI.exception.NewsNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,31 +57,17 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    public ResponseEntity<NewsGetResponseListDTO> get(String title,String writer,String publicationDate){
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    public List<NewsGetResponseDTO> get(String title,String writer,String publicationDate){
         Date startDate;
         Date endDate;
 
-        try {
-            if (publicationDate ==null){
+        startDate = definesStartDate(publicationDate);
+        endDate = definesEndDate(publicationDate,startDate);
 
-                startDate = simpleDateFormat.parse("01/01/0001");
-                endDate = simpleDateFormat.parse("31/12/9999");
-
-
-            }else {
-                startDate = simpleDateFormat.parse(publicationDate);
-                endDate = addOneDayToDate(startDate);
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException("Error while corventing date");
-        }
 
         List<News> newsList = newsRepository.findNews(title,writer,startDate,endDate);
 
-        List<NewsGetResponseDTO> newsListResponse = newsList.stream().map(news -> new NewsGetResponseDTO(
+        return newsList.stream().map(news -> new NewsGetResponseDTO(
                                                         news.getId(),
                                                         news.getTitle(),
                                                         news.getBody(),
@@ -86,30 +75,14 @@ public class NewsService {
                                                         news.getWriter().getUsername())
                                                     ).toList();
 
-        return ResponseEntity.ok().body(new NewsGetResponseListDTO("News returned successfully",newsList.size(),1,newsListResponse));
     }
 
-    public ResponseEntity<NewsGetResponseListDTO> getNewsPaged(String title, String writer, String publicationDate, int page, int pageSize){
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
+    public NewsGetResponseListDTO getNewsPaged(String title, String writer, String publicationDate, int page, int pageSize){
         Date startDate;
         Date endDate;
 
-        try {
-            if (publicationDate ==null){
-
-                startDate = simpleDateFormat.parse("01/01/0001");
-                endDate = simpleDateFormat.parse("31/12/9999");
-
-
-            }else {
-                startDate = simpleDateFormat.parse(publicationDate);
-                endDate = addOneDayToDate(startDate);
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException("Error while corventing date");
-        }
+        startDate = definesStartDate(publicationDate);
+        endDate = definesEndDate(publicationDate,startDate);
 
         Pageable pageable = PageRequest.of(page,pageSize);
         Page<News> newsPage = newsRepository.findNews(title,writer,startDate,endDate,pageable);
@@ -121,7 +94,7 @@ public class NewsService {
                                                         news.getWriter().getUsername())
                                                     ).stream().toList();
 
-        return ResponseEntity.ok().body(new NewsGetResponseListDTO("News returned successfully",newsPage.getTotalElements(),newsPage.getTotalPages(),newsListResponse));
+        return new NewsGetResponseListDTO("News returned successfully",newsPage.getTotalElements(),newsPage.getTotalPages(),newsListResponse);
     }
 
     private Date addOneDayToDate(Date date){
@@ -133,15 +106,45 @@ public class NewsService {
         return calendar.getTime();
     }
 
-    public News getOne(UUID newsID){
-        return newsRepository.findById(newsID)
-                .orElseThrow(() -> new IllegalArgumentException("News Not Found"));
+    private Date definesStartDate(String publicationDate){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date startDate;
+            if (publicationDate ==null) {
+                startDate = simpleDateFormat.parse("01/01/0001");
+            }else {
+                startDate = simpleDateFormat.parse(publicationDate);
+            }
+            return startDate;
+        }catch (Exception e){
+            throw new DateConvertException(e.getMessage());
+        }
     }
 
-    public ResponseEntity<NewsResponseDTO> update(UUID newsID, NewsRequestDTO data){
+    private Date definesEndDate(String publicationDate, Date startDate) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date endDate;
+            if (publicationDate == null) {
+                endDate = simpleDateFormat.parse("31/12/9999");
+            } else {
+                endDate = addOneDayToDate(startDate);
+            }
+            return endDate;
+        } catch (Exception e) {
+            throw new DateConvertException(e.getMessage());
+        }
+    }
+
+    public News getOne(UUID newsID){
+        return newsRepository.findById(newsID)
+                .orElseThrow(() -> new NewsNotFoundException("News Not Found"));
+    }
+
+    public News update(UUID newsID, NewsRequestDTO data){
 
         if (!newsRepository.existsById(newsID)){
-            return ResponseEntity.status(404).body(new NewsResponseDTO("News not found.",null,null,null,null,null));
+            throw new NewsNotFoundException("News Not Found");
         }
 
         News oldNews = getOne(newsID);
@@ -149,7 +152,7 @@ public class NewsService {
         String loggedUsername = tokenService.recoverTokenAndGetUsername();
 
         if (!loggedUsername.equals(oldNews.getWriter().getUsername())){
-            return ResponseEntity.status(401).body(new NewsResponseDTO("You are not authorized to update this news because it belongs to another user.",null,null,null,null,null));
+            throw new BelongsToAnotherWriterException("You are not authorized to update this news because it belongs to another user.");
         }
 
         News updatedNews = new News(
@@ -160,15 +163,13 @@ public class NewsService {
             oldNews.getWriter()
         );
 
-        newsRepository.save(updatedNews);
-
-        return ResponseEntity.ok().body(new NewsResponseDTO("News updated successfully",updatedNews.getId(),updatedNews.getTitle(), updatedNews.getBody(),updatedNews.getPublishedAt(),updatedNews.getWriter().getUsername()));
+        return newsRepository.save(updatedNews);
     }
 
-    public ResponseEntity<NewsResponseDTO> delete(UUID newsID){
+    public News delete(UUID newsID){
 
         if (!newsRepository.existsById(newsID)){
-            return ResponseEntity.status(404).body(new NewsResponseDTO("News not found.",null,null,null,null,null));
+            throw new NewsNotFoundException("News Not Found");
         }
 
         News news = getOne(newsID);
@@ -176,12 +177,15 @@ public class NewsService {
         String loggedUsername = tokenService.recoverTokenAndGetUsername();
 
         if (!loggedUsername.equals(news.getWriter().getUsername())){
-            return ResponseEntity.status(401).body(new NewsResponseDTO("You are not authorized to update this news because it belongs to another user.",null,null,null,null,null));
+            throw new BelongsToAnotherWriterException("You are not authorized to update this news because it belongs to another user.");
         }
 
         newsRepository.delete(news);
 
-        return ResponseEntity.ok().body(new NewsResponseDTO("News deleted successfully",news.getId(),news.getTitle(), news.getBody(),news.getPublishedAt(),news.getWriter().getUsername()));
+        return news;
     }
+
+
+
 
 }
