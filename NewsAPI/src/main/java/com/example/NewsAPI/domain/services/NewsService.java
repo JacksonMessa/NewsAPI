@@ -39,6 +39,9 @@ public class NewsService {
     UserRepository userRepository;
 
     @Autowired
+    DateService dateService;
+
+    @Autowired
     Clock clock;
 
     public News create(NewsRequestDTO data){
@@ -61,8 +64,8 @@ public class NewsService {
         Date startDate;
         Date endDate;
 
-        startDate = definesStartDate(publicationDate);
-        endDate = definesEndDate(publicationDate,startDate);
+        startDate = dateService.definesStartDate(publicationDate);
+        endDate = dateService.definesEndDate(publicationDate,startDate);
 
 
         List<News> newsList = newsRepository.findNews(title,writer,startDate,endDate);
@@ -81,8 +84,8 @@ public class NewsService {
         Date startDate;
         Date endDate;
 
-        startDate = definesStartDate(publicationDate);
-        endDate = definesEndDate(publicationDate,startDate);
+        startDate = dateService.definesStartDate(publicationDate);
+        endDate = dateService.definesEndDate(publicationDate,startDate);
 
         Pageable pageable = PageRequest.of(page,pageSize);
         Page<News> newsPage = newsRepository.findNews(title,writer,startDate,endDate,pageable);
@@ -97,44 +100,7 @@ public class NewsService {
         return new NewsGetResponseListDTO("News returned successfully",newsPage.getTotalElements(),newsPage.getTotalPages(),newsListResponse);
     }
 
-    private Date addOneDayToDate(Date date){
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DATE,1);
-
-        return calendar.getTime();
-    }
-
-    private Date definesStartDate(String publicationDate){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date startDate;
-            if (publicationDate ==null) {
-                startDate = simpleDateFormat.parse("01/01/0001");
-            }else {
-                startDate = simpleDateFormat.parse(publicationDate);
-            }
-            return startDate;
-        }catch (Exception e){
-            throw new DateConvertException(e.getMessage());
-        }
-    }
-
-    private Date definesEndDate(String publicationDate, Date startDate) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            Date endDate;
-            if (publicationDate == null) {
-                endDate = simpleDateFormat.parse("31/12/9999");
-            } else {
-                endDate = addOneDayToDate(startDate);
-            }
-            return endDate;
-        } catch (Exception e) {
-            throw new DateConvertException(e.getMessage());
-        }
-    }
 
     public News getOne(UUID newsID){
         return newsRepository.findById(newsID)
