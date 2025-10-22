@@ -108,11 +108,6 @@ public class NewsService {
     }
 
     public News update(UUID newsID, NewsRequestDTO data){
-
-        if (!newsRepository.existsById(newsID)){
-            throw new NewsNotFoundException("News Not Found");
-        }
-
         News oldNews = getOne(newsID);
 
         String loggedUsername = tokenService.recoverTokenAndGetUsername();
@@ -133,11 +128,6 @@ public class NewsService {
     }
 
     public News delete(UUID newsID){
-
-        if (!newsRepository.existsById(newsID)){
-            throw new NewsNotFoundException("News Not Found");
-        }
-
         News news = getOne(newsID);
 
         String loggedUsername = tokenService.recoverTokenAndGetUsername();
