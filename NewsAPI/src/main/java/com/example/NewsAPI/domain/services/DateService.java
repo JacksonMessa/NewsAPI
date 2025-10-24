@@ -14,7 +14,7 @@ public class DateService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
             Date startDate;
-            if (publicationDate ==null) {
+            if (publicationDate == null) {
                 startDate = simpleDateFormat.parse("01/01/0001");
             }else {
                 startDate = simpleDateFormat.parse(publicationDate);
@@ -36,7 +36,7 @@ public class DateService {
             }
             return endDate;
         } catch (Exception e) {
-            throw new DateConvertException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
