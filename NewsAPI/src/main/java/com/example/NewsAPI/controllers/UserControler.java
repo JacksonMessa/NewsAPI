@@ -1,16 +1,9 @@
 package com.example.NewsAPI.controllers;
 
-import com.example.NewsAPI.domain.repositories.UserRepository;
-import com.example.NewsAPI.domain.services.TokenService;
+import com.example.NewsAPI.domain.services.UserService;
 import com.example.NewsAPI.domain.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,49 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserControler {
 
     @Autowired
-    UserRepository repository;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    TokenService tokenService;
-
+    UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO data){
-        if(repository.findByUsername(data.username())!=null){
-            return ResponseEntity.badRequest().body(new RegisterResponseDTO("This username is already registered"));
-        }
-
-        String encrypetPassword = new BCryptPasswordEncoder().encode(data.password());
-
-        User newUser = new User(data.username(), encrypetPassword, data.role());
-        repository.save(newUser);
+        userService.create(data);
         return ResponseEntity.ok().body(new RegisterResponseDTO("User created successfully"));
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO data){
-        if(repository.findByUsername(data.username())==null){
-            return ResponseEntity.status(401).body(new LoginResponseDTO("Incorrect username or password",null,null));
-        }else {
-
-            ResponseEntity<LoginResponseDTO> loginResponse;
-            try{
-                UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(data.username(),data.password());
-                Authentication auth = authenticationManager.authenticate(usernamePassword);
-                String token = tokenService.generateToken((User) auth.getPrincipal());
-                User user = repository.findUserByUsername(data.username());
-                loginResponse = ResponseEntity.ok().body(new LoginResponseDTO("Login successfully",token, new UserResponseDTO(user.getUsername(),user.getRole())));
-            }catch (BadCredentialsException e){
-                loginResponse = ResponseEntity.status(401).body(new LoginResponseDTO("Incorrect username or password",null,null));
-            }
-
-            return loginResponse;
-        }
-
-
+        return ResponseEntity.ok().body(userService.login(data));
     }
 
 }

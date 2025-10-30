@@ -1,10 +1,7 @@
 package com.example.NewsAPI.domain.infra;
 
-import com.example.NewsAPI.exception.BelongsToAnotherWriterException;
-import com.example.NewsAPI.exception.DateConvertException;
-import com.example.NewsAPI.exception.NewsNotFoundException;
+import com.example.NewsAPI.exception.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -20,6 +17,16 @@ public class RestExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     private ResponseEntity<String> methodArgumentTypeMismatchException(){
         return ResponseEntity.status(400).body("Some of the parameters sent contain the wrong type.");
+    }
+
+    @ExceptionHandler(UserAlreadyRegisteredException.class)
+    private ResponseEntity<String> userAlreadyRegisteredExceptionHandler(){
+        return ResponseEntity.status(400).body("This username is already registered.");
+    }
+
+    @ExceptionHandler(IncorrectLoginCredentialsException.class)
+    private ResponseEntity<String> incorrectLoginCredentialsExceptionHandler(){
+        return ResponseEntity.status(401).body("Incorrect username or password.");
     }
 
     @ExceptionHandler(DateConvertException.class)
