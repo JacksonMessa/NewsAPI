@@ -11,4 +11,8 @@ public class UserTestFactory {
     public static User buildOne(String username){
         return new User(username,"123", UserRole.WRITER);
     }
+
+    public static User buildOne(String username, UserRole userRole){
+        return new User(username,"123",userRole);
+    }
 }
