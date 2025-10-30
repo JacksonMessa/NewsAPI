@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class UserService {
             String token = tokenService.generateToken((User) auth.getPrincipal());
             User user = repository.findUserByUsername(data.username());
             return new LoginResponseDTO("Login successfully",token,new UserResponseDTO(user.getUsername(),user.getRole()));
-        } catch (Exception e) {
+        } catch (AuthenticationException e) {
             throw new IncorrectLoginCredentialsException("Incorrect username or password");
         }
     }
