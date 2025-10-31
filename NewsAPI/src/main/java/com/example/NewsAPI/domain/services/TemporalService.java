@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -56,6 +57,6 @@ public class TemporalService {
     }
 
     public Instant plusHoursFromNow(int hours){
-        return clock.instant().plusSeconds(hours*3600L);
+        return clock.instant().plus(hours, ChronoUnit.HOURS);
     }
 }
