@@ -5,12 +5,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.example.NewsAPI.domain.user.User;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.time.*;
 import java.util.Objects;
 
 @Service
@@ -18,13 +18,16 @@ public class TokenService {
     @Value("${token.secret}")
     private String secret;
 
+    @Autowired
+    TemporalService temporalService;
+
     public String generateToken(User user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return  JWT.create()
                     .withIssuer("news-api")
                     .withSubject(user.getUsername())
-                    .withExpiresAt(generateExpirationTime())
+                    .withExpiresAt(temporalService.plusHoursFromNow(5))
                     .sign(algorithm);
         }catch (JWTCreationException exception){
             throw new RuntimeException("Error while generating token");
@@ -65,15 +68,9 @@ public class TokenService {
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving HttpServletRequest");
         }
-
-
-
-
     }
 
-    private Instant generateExpirationTime(){
-        return LocalDateTime.now().plusHours(5).toInstant(ZoneOffset.of("-03:00"));
-    }
+
 
     public String recoverToken(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");

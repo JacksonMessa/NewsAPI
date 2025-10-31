@@ -1,14 +1,20 @@
 package com.example.NewsAPI.domain.services;
 
 import com.example.NewsAPI.exception.DateConvertException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 
 @Service
-public class DateService {
+public class TemporalService {
+
+    @Autowired
+    Clock clock;
 
     public Date definesStartDate(String publicationDate){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -47,5 +53,9 @@ public class DateService {
         calendar.add(Calendar.DATE,1);
 
         return calendar.getTime();
+    }
+
+    public Instant plusHoursFromNow(int hours){
+        return clock.instant().plusSeconds(hours*3600L);
     }
 }

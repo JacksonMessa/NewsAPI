@@ -30,7 +30,7 @@ public class NewsService {
     UserRepository userRepository;
 
     @Autowired
-    DateService dateService;
+    TemporalService dateService;
 
     @Autowired
     Clock clock;

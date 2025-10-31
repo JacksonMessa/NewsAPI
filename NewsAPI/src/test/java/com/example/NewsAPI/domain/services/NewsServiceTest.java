@@ -51,7 +51,7 @@ class NewsServiceTest {
     UserRepository userRepository;
 
     @Mock
-    DateService dateService;
+    TemporalService dateService;
 
     @Mock
     Clock clock;

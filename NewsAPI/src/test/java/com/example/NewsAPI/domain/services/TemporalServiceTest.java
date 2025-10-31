@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 
-class DateServiceTest {
+class TemporalServiceTest {
 
-    DateService dateService;
+    TemporalService dateService;
 
     @BeforeEach
     public void setup(){
-        dateService = new DateService();
+        dateService = new TemporalService();
     }
 
     @Nested
