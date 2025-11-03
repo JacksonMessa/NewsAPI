@@ -30,7 +30,7 @@ public class NewsService {
     UserRepository userRepository;
 
     @Autowired
-    TemporalService dateService;
+    TemporalService temporalService;
 
     @Autowired
     Clock clock;
@@ -56,8 +56,8 @@ public class NewsService {
         Date startDate;
         Date endDate;
 
-        startDate = dateService.definesStartDate(publicationDate);
-        endDate = dateService.definesEndDate(publicationDate,startDate);
+        startDate = temporalService.definesStartDate(publicationDate);
+        endDate = temporalService.definesEndDate(publicationDate,startDate);
 
 
         List<News> newsList = newsRepository.findNews(title,writer,startDate,endDate);
@@ -76,8 +76,8 @@ public class NewsService {
         Date startDate;
         Date endDate;
 
-        startDate = dateService.definesStartDate(publicationDate);
-        endDate = dateService.definesEndDate(publicationDate,startDate);
+        startDate = temporalService.definesStartDate(publicationDate);
+        endDate = temporalService.definesEndDate(publicationDate,startDate);
 
         Pageable pageable = PageRequest.of(page,pageSize);
         Page<News> newsPage = newsRepository.findNews(title,writer,startDate,endDate,pageable);
