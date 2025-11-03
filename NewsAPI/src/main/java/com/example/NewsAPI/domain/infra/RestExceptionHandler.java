@@ -14,6 +14,18 @@ public class RestExceptionHandler {
         return ResponseEntity.status(500).body("An unexpected error occurred.");
     }
 
+    @ExceptionHandler(TokenGenerationException.class)
+    private ResponseEntity<String> tokenGenerationException(){
+        return ResponseEntity.status(500).body("Error while generating token");
+    }
+
+    @ExceptionHandler(RetrievingHttpTokenException.class)
+    private ResponseEntity<String> retrievingHttpTokenException(){
+        return ResponseEntity.status(500).body("Error retrieving HttpServletRequest from token");
+    }
+
+
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     private ResponseEntity<String> methodArgumentTypeMismatchException(){
         return ResponseEntity.status(400).body("Some of the parameters sent contain the wrong type.");

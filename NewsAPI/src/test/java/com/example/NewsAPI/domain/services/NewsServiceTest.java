@@ -66,6 +66,8 @@ class NewsServiceTest {
 
             NewsRequestDTO newsData = new NewsRequestDTO("TitleTest","BodyTest");
 
+            String tokenExpected = "123Token123";
+
             News newsExpected = NewsTestFactory.buildOne(newsData,writer);
 
             Date publishedAt = newsExpected.getPublishedAt();
@@ -73,7 +75,8 @@ class NewsServiceTest {
             ArgumentCaptor<News> newsCaptor = ArgumentCaptor.forClass(News.class);
 
             when(clock.instant()).thenReturn(publishedAt.toInstant());
-            when(tokenService.recoverTokenAndGetUsername()).thenReturn(writer.getUsername());
+            when(tokenService.recoverToken()).thenReturn(tokenExpected);
+            when(tokenService.validateTokenAndGetUsername(tokenExpected)).thenReturn(writer.getUsername());
             when(userRepository.findByUsername(writer.getUsername())).thenReturn(writer);
             when(newsRepository.save(any())).thenReturn(newsExpected);
 
@@ -83,7 +86,8 @@ class NewsServiceTest {
 
             //Assert
             verify(clock).instant();
-            verify(tokenService).recoverTokenAndGetUsername();
+            verify(tokenService).recoverToken();
+            verify(tokenService).validateTokenAndGetUsername(tokenExpected);
             verify(userRepository).findByUsername(writer.getUsername());
             verify(newsRepository).save(newsCaptor.capture());
 
@@ -497,11 +501,13 @@ class NewsServiceTest {
             News oldNews = NewsTestFactory.buildOne(newsId,loggedWriter);
             News newsExpected = NewsTestFactory.buildOne(newsId,newsData,loggedWriter);
 
+            String tokenExpected = "123token123";
 
             ArgumentCaptor<News> newsCaptor = ArgumentCaptor.forClass(News.class);
 
             when(newsRepository.findById(newsId)).thenReturn(Optional.of(oldNews));
-            when(tokenService.recoverTokenAndGetUsername()).thenReturn(loggedWriter.getUsername());
+            when(tokenService.recoverToken()).thenReturn(tokenExpected);
+            when(tokenService.validateTokenAndGetUsername(tokenExpected)).thenReturn(loggedWriter.getUsername());
             when(newsRepository.save(any())).thenReturn(newsExpected);
 
             //Act
@@ -511,7 +517,8 @@ class NewsServiceTest {
             //Assert
 
             verify(newsRepository).findById(newsId);
-            verify(tokenService).recoverTokenAndGetUsername();
+            verify(tokenService).recoverToken();
+            verify(tokenService).validateTokenAndGetUsername(tokenExpected);
             verify(newsRepository).save(newsCaptor.capture());
 
             verifyNoMoreInteractions(newsRepository,tokenService);
@@ -537,11 +544,13 @@ class NewsServiceTest {
 
             News oldNews = NewsTestFactory.buildOne(newsId,loggedWriter);
 
+            String tokenExpected = "123token123";
 
             ArgumentCaptor<News> newsCaptor = ArgumentCaptor.forClass(News.class);
 
             when(newsRepository.findById(newsId)).thenReturn(Optional.of(oldNews));
-            when(tokenService.recoverTokenAndGetUsername()).thenReturn(loggedWriter.getUsername());
+            when(tokenService.recoverToken()).thenReturn(tokenExpected);
+            when(tokenService.validateTokenAndGetUsername(tokenExpected)).thenReturn(loggedWriter.getUsername());
             when(newsRepository.save(any())).thenReturn(oldNews);
 
             //Act
@@ -551,7 +560,8 @@ class NewsServiceTest {
             //Assert
 
             verify(newsRepository).findById(newsId);
-            verify(tokenService).recoverTokenAndGetUsername();
+            verify(tokenService).recoverToken();
+            verify(tokenService).validateTokenAndGetUsername(tokenExpected);
             verify(newsRepository).save(newsCaptor.capture());
 
             verifyNoMoreInteractions(newsRepository,tokenService);
@@ -580,8 +590,11 @@ class NewsServiceTest {
 
         News oldNews = NewsTestFactory.buildOne(newsId,newsWriter);
 
+        String tokenExpected = "123token123";
+
         when(newsRepository.findById(newsId)).thenReturn(Optional.of(oldNews));
-        when(tokenService.recoverTokenAndGetUsername()).thenReturn(loggedWriter.getUsername());
+        when(tokenService.recoverToken()).thenReturn(tokenExpected);
+        when(tokenService.validateTokenAndGetUsername(tokenExpected)).thenReturn(loggedWriter.getUsername());
 
         //Act / Assert
         BelongsToAnotherWriterException exception =
@@ -590,7 +603,8 @@ class NewsServiceTest {
 
         //Assert
         verify(newsRepository).findById(newsId);
-        verify(tokenService).recoverTokenAndGetUsername();
+        verify(tokenService).recoverToken();
+        verify(tokenService).validateTokenAndGetUsername(tokenExpected);
         verify(newsRepository,never()).save(any());
 
         verifyNoMoreInteractions(newsRepository,tokenService);
@@ -609,8 +623,11 @@ class NewsServiceTest {
 
             News newsExpected = NewsTestFactory.buildOne(newsId,loggedWriter);
 
+            String tokenExpected = "123token123";
+
             when(newsRepository.findById(newsId)).thenReturn(Optional.of(newsExpected));
-            when(tokenService.recoverTokenAndGetUsername()).thenReturn(loggedWriter.getUsername());
+            when(tokenService.recoverToken()).thenReturn(tokenExpected);
+            when(tokenService.validateTokenAndGetUsername(tokenExpected)).thenReturn(loggedWriter.getUsername());
             doNothing().when(newsRepository).delete(newsExpected);
 
             //Act
@@ -619,7 +636,8 @@ class NewsServiceTest {
             //Assert
 
             verify(newsRepository).findById(newsId);
-            verify(tokenService).recoverTokenAndGetUsername();
+            verify(tokenService).recoverToken();
+            verify(tokenService).validateTokenAndGetUsername(tokenExpected);
             verify(newsRepository).delete(newsExpected);
 
             verifyNoMoreInteractions(newsRepository,tokenService);
@@ -640,8 +658,11 @@ class NewsServiceTest {
 
             News newsExpected = NewsTestFactory.buildOne(newsId,newsWriter);
 
+            String tokenExpected = "123token123";
+
             when(newsRepository.findById(newsId)).thenReturn(Optional.of(newsExpected));
-            when(tokenService.recoverTokenAndGetUsername()).thenReturn(loggedWriter.getUsername());
+            when(tokenService.recoverToken()).thenReturn(tokenExpected);
+            when(tokenService.validateTokenAndGetUsername(tokenExpected)).thenReturn(loggedWriter.getUsername());
 
             //Act / Assert
             BelongsToAnotherWriterException exception =
@@ -650,7 +671,8 @@ class NewsServiceTest {
 
             //Assert
             verify(newsRepository).findById(newsId);
-            verify(tokenService).recoverTokenAndGetUsername();
+            verify(tokenService).recoverToken();
+            verify(tokenService).validateTokenAndGetUsername(tokenExpected);
             verify(newsRepository,never()).delete(newsExpected);
 
             verifyNoMoreInteractions(newsRepository,tokenService);

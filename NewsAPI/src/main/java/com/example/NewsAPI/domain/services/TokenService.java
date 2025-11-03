@@ -2,8 +2,9 @@ package com.example.NewsAPI.domain.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.example.NewsAPI.domain.user.User;
+import com.example.NewsAPI.exception.RetrievingHttpTokenException;
+import com.example.NewsAPI.exception.TokenGenerationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +30,8 @@ public class TokenService {
                     .withSubject(user.getUsername())
                     .withExpiresAt(temporalService.plusHoursFromNow(5))
                     .sign(algorithm);
-        }catch (JWTCreationException exception){
-            throw new RuntimeException("Error while generating token");
+        }catch (Exception exception){
+            throw new TokenGenerationException("Error while generating token");
         }
     }
 
@@ -42,31 +43,18 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-        }catch (JWTCreationException exception){
+        }catch (Exception exception){
             return "";
         }
     }
-    public String recoverTokenAndGetUsername(){
-
+    public String recoverToken(){
         try {
             HttpServletRequest request =
                     ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
                             .getRequest();
-            String token = recoverToken(request);
-
-            try {
-                Algorithm algorithm = Algorithm.HMAC256(secret);
-                return JWT.require(algorithm)
-                        .withIssuer("news-api")
-                        .build()
-                        .verify(token)
-                        .getSubject();
-            }catch (JWTCreationException exception){
-                throw new RuntimeException("Error retrieving username from token");
-            }
-
+            return recoverToken(request);
         } catch (Exception e) {
-            throw new RuntimeException("Error retrieving HttpServletRequest");
+            throw new RetrievingHttpTokenException("Error retrieving HttpServletRequest");
         }
     }
 

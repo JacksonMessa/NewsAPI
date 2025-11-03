@@ -43,7 +43,8 @@ public class NewsService {
 
         news.setPublishedAt(Date.from(clock.instant()));
 
-        String writerUsername = tokenService.recoverTokenAndGetUsername();
+        String token = tokenService.recoverToken();
+        String writerUsername = tokenService.validateTokenAndGetUsername(token);
         UserDetails writer = userRepository.findByUsername(writerUsername);
 
         news.setWriter((User) writer);
@@ -101,7 +102,8 @@ public class NewsService {
     public News update(UUID newsID, NewsRequestDTO data){
         News oldNews = getOne(newsID);
 
-        String loggedUsername = tokenService.recoverTokenAndGetUsername();
+        String token = tokenService.recoverToken();
+        String loggedUsername = tokenService.validateTokenAndGetUsername(token);
 
         if (!loggedUsername.equals(oldNews.getWriter().getUsername())){
             throw new BelongsToAnotherWriterException("You are not authorized to update this news because it belongs to another user.");
@@ -121,7 +123,8 @@ public class NewsService {
     public News delete(UUID newsID){
         News news = getOne(newsID);
 
-        String loggedUsername = tokenService.recoverTokenAndGetUsername();
+        String token = tokenService.recoverToken();
+        String loggedUsername = tokenService.validateTokenAndGetUsername(token);
 
         if (!loggedUsername.equals(news.getWriter().getUsername())){
             throw new BelongsToAnotherWriterException("You are not authorized to update this news because it belongs to another user.");
