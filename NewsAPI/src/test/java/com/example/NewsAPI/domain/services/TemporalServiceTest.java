@@ -2,25 +2,27 @@ package com.example.NewsAPI.domain.services;
 
 import com.example.NewsAPI.exception.DateConvertException;
 import org.junit.jupiter.api.*;
-
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-
-
+@ExtendWith(MockitoExtension.class)
 class TemporalServiceTest {
 
-    TemporalService dateService;
+    @InjectMocks
+    TemporalService temporalService;
 
-    @BeforeEach
-    public void setup(){
-        dateService = new TemporalService();
-    }
+    @Mock
+    Clock clock;
+
 
     @Nested
     class definesStartDate{
@@ -35,7 +37,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedExpectedDate.toInstant());
 
             //Act
-            Date returnedDate = dateService.definesStartDate(publicationDate);
+            Date returnedDate = temporalService.definesStartDate(publicationDate);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -51,7 +53,7 @@ class TemporalServiceTest {
 
 
             //Act
-            Date returnedDate = dateService.definesStartDate(null);
+            Date returnedDate = temporalService.definesStartDate(null);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -65,7 +67,7 @@ class TemporalServiceTest {
             String publicationDate = "24-10-2025";
 
             //Act / Assert
-            assertThrows(DateConvertException.class,() -> dateService.definesStartDate(publicationDate));
+            assertThrows(DateConvertException.class,() -> temporalService.definesStartDate(publicationDate));
         }
     }
 
@@ -85,7 +87,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedExpectedDate.toInstant());
 
             //Act
-            Date returnedDate = dateService.definesEndDate(publicationDate,startDate);
+            Date returnedDate = temporalService.definesEndDate(publicationDate,startDate);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -99,7 +101,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedDateTime.toInstant());
 
             //Act
-            Date returnedDate = dateService.definesEndDate(null,null);
+            Date returnedDate = temporalService.definesEndDate(null,null);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -112,7 +114,7 @@ class TemporalServiceTest {
             String publicationDate = "24/10/2025";
 
             //Act / Assert
-            assertThrows(RuntimeException.class,() -> dateService.definesEndDate(publicationDate,null));
+            assertThrows(RuntimeException.class,() -> temporalService.definesEndDate(publicationDate,null));
         }
     }
 
@@ -129,7 +131,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedDateTime.toInstant());
 
             //Act
-            Date returnedDate = dateService.addOneDayToDate(date);
+            Date returnedDate = temporalService.addOneDayToDate(date);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -146,7 +148,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedDateTime.toInstant());
 
             //Act
-            Date returnedDate = dateService.addOneDayToDate(date);
+            Date returnedDate = temporalService.addOneDayToDate(date);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -163,7 +165,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedDateTime.toInstant());
 
             //Act
-            Date returnedDate = dateService.addOneDayToDate(date);
+            Date returnedDate = temporalService.addOneDayToDate(date);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -180,7 +182,7 @@ class TemporalServiceTest {
             Date expectedDate = Date.from(zonedDateTime.toInstant());
 
             //Act
-            Date returnedDate = dateService.addOneDayToDate(date);
+            Date returnedDate = temporalService.addOneDayToDate(date);
 
             //Assert
             assertEquals(expectedDate,returnedDate);
@@ -193,10 +195,51 @@ class TemporalServiceTest {
             Date publicationDate = null;
 
             //Act / Assert
-            assertThrows(NullPointerException.class,() -> dateService.addOneDayToDate(publicationDate));
+            assertThrows(NullPointerException.class,() -> temporalService.addOneDayToDate(publicationDate));
         }
     }
 
+    @Nested
+    class plusHoursFromNow{
+        @Test
+        @DisplayName("Should add the number of hours sent to the current time")
+        void plusHoursFromNowTestSuccess(){
+            //Arrange
+            int hours = 5;
+            Instant instant = Instant.parse("2025-11-03T00:00:00Z");
+            Instant instantAdded =  Instant.parse("2025-11-03T05:00:00Z");
 
+            when(clock.instant()).thenReturn(instant);
+            //Act
+            Instant instantReturned = temporalService.plusHoursFromNow(hours);
+
+            //Assert
+            verify(clock).instant();
+
+            verifyNoMoreInteractions(clock);
+
+            assertEquals(instantAdded,instantReturned);
+        }
+
+        @Test
+        @DisplayName("Should subtract the number of hours sent to the current time when negative hour is sent")
+        void plusHoursFromNowTestNegativeHoursSuccess(){
+            //Arrange
+            int hours = -5;
+            Instant instant =  Instant.parse("2025-11-03T05:00:00Z");
+            Instant instantSubtracted = Instant.parse("2025-11-03T00:00:00Z");
+
+            when(clock.instant()).thenReturn(instant);
+            //Act
+            Instant instantReturned = temporalService.plusHoursFromNow(hours);
+
+            //Assert
+            verify(clock).instant();
+
+            verifyNoMoreInteractions(clock);
+
+            assertEquals(instantSubtracted ,instantReturned);
+        }
+    }
 
 }
