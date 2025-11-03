@@ -47,6 +47,16 @@ public class TokenService {
             return "";
         }
     }
+
+    public String recoverToken(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader==null){
+            return null;
+        }else {
+            return authHeader.replace("Bearer ","");
+        }
+    }
+
     public String recoverToken(){
         try {
             HttpServletRequest request =
@@ -55,17 +65,6 @@ public class TokenService {
             return recoverToken(request);
         } catch (Exception e) {
             throw new RetrievingHttpTokenException("Error retrieving HttpServletRequest");
-        }
-    }
-
-
-
-    public String recoverToken(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader==null){
-            return null;
-        }else {
-            return authHeader.replace("Bearer ","");
         }
     }
 }
