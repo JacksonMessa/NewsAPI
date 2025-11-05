@@ -2,9 +2,15 @@ package com.example.NewsAPI.domain.infra;
 
 import com.example.NewsAPI.exception.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestExceptionHandler {
@@ -54,5 +60,18 @@ public class RestExceptionHandler {
     @ExceptionHandler(BelongsToAnotherWriterException.class)
     private ResponseEntity<String> belongsToAnotherWriterExceptionHandler(){
         return ResponseEntity.status(401).body("You are not authorized to update this news because it belongs to another user.");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        fieldError -> Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Unexpected verification fail")
+                ));
+
+        return ResponseEntity.status(400).body(errors);
     }
 }

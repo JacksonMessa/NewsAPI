@@ -1,7 +1,10 @@
 package com.example.NewsAPI.domain.news;
 
-import java.util.Date;
-import java.util.UUID;
+import jakarta.validation.constraints.NotBlank;
 
-public record NewsRequestDTO(String title, String body) {
-}
+public record NewsRequestDTO(
+        @NotBlank(message = "The news title is a mandatory parameter")
+        String title,
+        @NotBlank(message = "The news body is a mandatory parameter")
+        String body
+){}

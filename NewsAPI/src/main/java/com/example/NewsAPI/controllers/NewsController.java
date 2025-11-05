@@ -2,6 +2,7 @@ package com.example.NewsAPI.controllers;
 
 import com.example.NewsAPI.domain.news.*;
 import com.example.NewsAPI.domain.services.NewsService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class NewsController {
     NewsService newsService;
 
     @PostMapping
-    public ResponseEntity<NewsResponseDTO> create(@RequestBody NewsRequestDTO data){
+    public ResponseEntity<NewsResponseDTO> create(@RequestBody @Valid NewsRequestDTO data){
         News news = newsService.create(data);
         return ResponseEntity.ok().body(new NewsResponseDTO("News created successfully",news.getId(),news.getTitle(), news.getBody(),news.getPublishedAt(),news.getWriter().getUsername()));
     }
