@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -53,10 +54,14 @@ public class RestExceptionHandler {
         return ResponseEntity.status(401).body("You are not authorized to update this news because it belongs to another user.");
     }
 
-
     @ExceptionHandler(NewsNotFoundException.class)
     private ResponseEntity<String> newsNotFoundExceptionHandler(){
-        return ResponseEntity.status(404).body("No news item was found with the provided ID.");
+        return ResponseEntity.status(404).body("No news item was found with the provided ID");
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    private ResponseEntity<String> NoResourceFoundException(){
+        return ResponseEntity.status(404).body("No endpoint was found matching the provided URL");
     }
 
     @ExceptionHandler(RuntimeException.class)
