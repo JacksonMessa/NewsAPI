@@ -15,23 +15,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    private ResponseEntity<String> runTimeExceptionHandler(){
-        return ResponseEntity.status(500).body("An unexpected error occurred.");
-    }
-
-    @ExceptionHandler(TokenGenerationException.class)
-    private ResponseEntity<String> tokenGenerationException(){
-        return ResponseEntity.status(500).body("Error while generating token");
-    }
-
-    @ExceptionHandler(RetrievingHttpTokenException.class)
-    private ResponseEntity<String> retrievingHttpTokenException(){
-        return ResponseEntity.status(500).body("Error retrieving HttpServletRequest from token");
-    }
-
-
-
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     private ResponseEntity<String> methodArgumentTypeMismatchException(){
         return ResponseEntity.status(400).body("Some of the parameters sent contain the wrong type.");
@@ -42,24 +25,9 @@ public class RestExceptionHandler {
         return ResponseEntity.status(400).body("This username is already registered.");
     }
 
-    @ExceptionHandler(IncorrectLoginCredentialsException.class)
-    private ResponseEntity<String> incorrectLoginCredentialsExceptionHandler(){
-        return ResponseEntity.status(401).body("Incorrect username or password.");
-    }
-
     @ExceptionHandler(DateConvertException.class)
     private ResponseEntity<String> dateConvertExceptionHandler(){
         return ResponseEntity.status(400).body("Error converting data. This parameter must be sent in DD/MM/YYYY format.");
-    }
-
-    @ExceptionHandler(NewsNotFoundException.class)
-    private ResponseEntity<String> newsNotFoundExceptionHandler(){
-        return ResponseEntity.status(404).body("No news item was found with the provided ID.");
-    }
-
-    @ExceptionHandler(BelongsToAnotherWriterException.class)
-    private ResponseEntity<String> belongsToAnotherWriterExceptionHandler(){
-        return ResponseEntity.status(401).body("You are not authorized to update this news because it belongs to another user.");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -73,5 +41,36 @@ public class RestExceptionHandler {
                 ));
 
         return ResponseEntity.status(400).body(errors);
+    }
+
+    @ExceptionHandler(IncorrectLoginCredentialsException.class)
+    private ResponseEntity<String> incorrectLoginCredentialsExceptionHandler(){
+        return ResponseEntity.status(401).body("Incorrect username or password.");
+    }
+
+    @ExceptionHandler(BelongsToAnotherWriterException.class)
+    private ResponseEntity<String> belongsToAnotherWriterExceptionHandler(){
+        return ResponseEntity.status(401).body("You are not authorized to update this news because it belongs to another user.");
+    }
+
+
+    @ExceptionHandler(NewsNotFoundException.class)
+    private ResponseEntity<String> newsNotFoundExceptionHandler(){
+        return ResponseEntity.status(404).body("No news item was found with the provided ID.");
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    private ResponseEntity<String> runTimeExceptionHandler(){
+        return ResponseEntity.status(500).body("An unexpected error occurred.");
+    }
+
+    @ExceptionHandler(TokenGenerationException.class)
+    private ResponseEntity<String> tokenGenerationException(){
+        return ResponseEntity.status(500).body("Error while generating token");
+    }
+
+    @ExceptionHandler(RetrievingHttpTokenException.class)
+    private ResponseEntity<String> retrievingHttpTokenException(){
+        return ResponseEntity.status(500).body("Error retrieving HttpServletRequest from token");
     }
 }
