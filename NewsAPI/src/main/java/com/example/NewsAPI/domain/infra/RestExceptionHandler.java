@@ -21,11 +21,6 @@ public class RestExceptionHandler {
         return ResponseEntity.status(400).body("Some of the parameters sent contain the wrong type.");
     }
 
-    @ExceptionHandler(UserAlreadyRegisteredException.class)
-    private ResponseEntity<String> userAlreadyRegisteredExceptionHandler(){
-        return ResponseEntity.status(400).body("This username is already registered.");
-    }
-
     @ExceptionHandler(DateConvertException.class)
     private ResponseEntity<String> dateConvertExceptionHandler(){
         return ResponseEntity.status(400).body("Error converting data. This parameter must be sent in DD/MM/YYYY format.");
@@ -68,6 +63,11 @@ public class RestExceptionHandler {
     private ResponseEntity<String> NoResourceFoundException(){
         return ResponseEntity.status(404).body("No endpoint was found matching the provided URL");
     }
+    @ExceptionHandler(UserAlreadyRegisteredException.class)
+    private ResponseEntity<String> userAlreadyRegisteredExceptionHandler(){
+        return ResponseEntity.status(409).body("This username is already registered.");
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     private ResponseEntity<String> runTimeExceptionHandler(){
