@@ -42,9 +42,41 @@ public class NewsTestFactory {
         );
     }
 
+    public static News buildOne(Date publicationDate){
+        return new News(
+                UUID.fromString("9a3acd51-2143-4a33-81a5-6ea065285379"),
+                "TitleTest",
+                "BodyTest",
+                publicationDate,
+                UserTestFactory.buildOne()
+        );
+    }
+
+    public static News buildOne(UUID uuid,Date publicationDate){
+        return new News(
+                uuid,
+                "TitleTest",
+                "BodyTest",
+                publicationDate,
+                UserTestFactory.buildOne()
+        );
+    }
+
+
     public static News buildOne(UUID uuid, NewsRequestDTO data, User writer){
         return new News(
                 uuid,
+                data.title(),
+                data.body(),
+                Date.from(Instant.parse("2025-10-14T00:00:00Z")),
+                writer
+        );
+    }
+
+
+    public static News buildOne(NewsRequestDTO data){
+        return new News(
+                UUID.fromString("9a3acd51-2143-4a33-81a5-6ea065285379"),
                 data.title(),
                 data.body(),
                 Date.from(Instant.parse("2025-10-14T00:00:00Z")),
@@ -77,6 +109,16 @@ public class NewsTestFactory {
                 UUID.fromString("9a3acd51-2143-4a33-81a5-6ea065285379"),
                 title,
                 "BodyTest",
+                publicationDate,
+                user
+        );
+    }
+
+    public static News buildOne(UUID newsId, NewsRequestDTO data, User user, Date publicationDate){
+        return new News(
+                newsId,
+                data.title(),
+                data.body(),
                 publicationDate,
                 user
         );
