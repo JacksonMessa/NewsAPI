@@ -127,7 +127,7 @@ public class NewsService {
         String loggedUsername = tokenService.validateTokenAndGetUsername(token);
 
         if (!loggedUsername.equals(news.getWriter().getUsername())){
-            throw new BelongsToAnotherWriterException("You are not authorized to update this news because it belongs to another user.");
+            throw new BelongsToAnotherWriterException("You are not authorized to delete this news because it belongs to another user.");
         }
 
         newsRepository.delete(news);

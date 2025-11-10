@@ -677,7 +677,7 @@ class NewsServiceTest {
 
             verifyNoMoreInteractions(newsRepository,tokenService);
 
-            assertEquals("You are not authorized to update this news because it belongs to another user.", exception.getMessage());
+            assertEquals("You are not authorized to delete this news because it belongs to another user.", exception.getMessage());
         }
     }
 }
