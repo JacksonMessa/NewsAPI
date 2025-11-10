@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("news-api/user")
-public class UserControler {
+public class UserController {
 
     @Autowired
     UserService userService;
