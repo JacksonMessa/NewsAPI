@@ -2,6 +2,7 @@ package com.example.NewsAPI.controllers;
 
 import com.example.NewsAPI.domain.services.UserService;
 import com.example.NewsAPI.domain.user.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO data){
+    public ResponseEntity<RegisterResponseDTO> register(@Valid @RequestBody RegisterRequestDTO data){
         userService.create(data);
         return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponseDTO("User created successfully"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO data){
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO data){
         return ResponseEntity.ok().body(userService.login(data));
     }
 
