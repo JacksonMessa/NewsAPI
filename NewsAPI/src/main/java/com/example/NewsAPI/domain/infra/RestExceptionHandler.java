@@ -26,11 +26,6 @@ public class RestExceptionHandler {
         return ResponseEntity.status(400).body("Error converting data. This parameter must be sent in DD/MM/YYYY format.");
     }
 
-    @ExceptionHandler(InvalidUserRoleException.class)
-    private ResponseEntity<String> invalidUserRoleExceptionHandler(){
-        return ResponseEntity.status(400).body("An invalid value was sent as the user role");
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
         Map<String, String> errors = exception.getBindingResult()
@@ -67,7 +62,6 @@ public class RestExceptionHandler {
     private ResponseEntity<String> userAlreadyRegisteredExceptionHandler(){
         return ResponseEntity.status(409).body("This username is already registered.");
     }
-
 
     @ExceptionHandler(RuntimeException.class)
     private ResponseEntity<String> runTimeExceptionHandler(){
