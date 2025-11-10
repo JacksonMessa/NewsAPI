@@ -3,6 +3,7 @@ package com.example.NewsAPI.controllers;
 import com.example.NewsAPI.domain.services.UserService;
 import com.example.NewsAPI.domain.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO data){
         userService.create(data);
-        return ResponseEntity.ok().body(new RegisterResponseDTO("User created successfully"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponseDTO("User created successfully"));
     }
 
     @PostMapping("/login")
