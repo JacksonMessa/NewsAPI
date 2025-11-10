@@ -51,7 +51,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(BelongsToAnotherWriterException.class)
     private ResponseEntity<String> belongsToAnotherWriterExceptionHandler(){
-        return ResponseEntity.status(401).body("You are not authorized to update this news because it belongs to another user.");
+        return ResponseEntity.status(403).body("You are not authorized to update this news because it belongs to another user.");
     }
 
     @ExceptionHandler(NewsNotFoundException.class)
