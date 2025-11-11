@@ -1,4 +1,4 @@
-FROM openjdk:19-jdk AS build
+FROM maven:3.8.7-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src src
@@ -9,7 +9,7 @@ COPY .mvn .mvn
 RUN chmod +x ./mvnw
 RUN ./mvnw clean package -DskipTests
 
-FROM openjdk:19-jdk
+FROM maven:3.8.7-eclipse-temurin-17
 VOLUME /tmp
 
 COPY --from=build /app/target/*.jar app.jar
