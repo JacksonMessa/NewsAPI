@@ -124,6 +124,16 @@ public class NewsTestFactory {
         );
     }
 
+    public static News buildOneWithoutId(String title, User user, Date publicationDate){
+        return new News(
+                null,
+                title,
+                "BodyTest",
+                publicationDate,
+                user
+        );
+    }
+
     public static List<NewsGetResponseDTO> buildGetDTOList(List<News> newsList){
         return newsList.stream().map(news -> new NewsGetResponseDTO(
                 news.getId(),
@@ -133,4 +143,5 @@ public class NewsTestFactory {
                 news.getWriter().getUsername()
         )).toList();
     }
+
 }
